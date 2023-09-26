@@ -6,6 +6,8 @@ import ContactForm from './contacnform/ContactForm';
 import ContactList from './contactlist/ContactList';
 import Filter from './filter/Filter';
 
+import { LS_CONTACTS_KEY } from '../constants/localStorageKeys';
+
 export class App extends Component {
   state = {
     contacts: [
@@ -57,6 +59,25 @@ export class App extends Component {
       contacts: prevState.contacts.filter((contact) => contact.id !== contactId),
     }));
   };
+
+  componentDidMount() {
+    const stringifiedContacts = localStorage.getItem(LS_CONTACTS_KEY);
+    const parsedContacts = JSON.parse(stringifiedContacts) || [];
+    
+    if (parsedContacts.length > 0) {
+      this.setState({
+        contacts: parsedContacts,
+      });
+    }
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.contacts.length !== prevState.contacts.length) {
+      const stringifieldContacts = JSON.stringify(this.state.contacts);
+      localStorage.setItem(LS_CONTACTS_KEY, stringifieldContacts);
+    }
+  }
+
 
   render() {
     
